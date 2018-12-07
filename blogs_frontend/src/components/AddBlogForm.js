@@ -1,87 +1,58 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import {Form, Icon, Input, Button} from 'antd'
 
-class AddBlogForm extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      title: '',
-      author: '',
-      url: '',
-    }
-  }
+const FormItem = Form.Item
 
-  static propTypes = {
-    onSubmit: PropTypes.func.isRequired
-  }
-
-  handleClick = (event) => {
-    event.preventDefault()
-    this.props.onSubmit(this.state.title, this.state.author, this.state.url)
-  }
-
-  listenTitle = (event) => {
-    event.preventDefault()
-    this.setState({title: event.target.value})
-  }
-
-  listenAuthor = (event) => {
-    event.preventDefault()
-    this.setState({author: event.target.value})
-  }
-
-  listenUrl = (event) => {
-    event.preventDefault()
-    this.setState({url: event.target.value})
+class BasicAddBlogForm extends React.Component {
+  handleSubmit = (e) => {
+    e.preventDefault()
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        this.props.onSubmit(values.title, values.author, values.url)
+      }
+    })
   }
 
   render() {
+    const { getFieldDecorator } = this.props.form
     return (
-      <div>
-        <h2>Add new blog</h2>
-        <form onSubmit={this.handleClick}>
-          <table><tbody>
-            <tr>
-              <td>
-                Title:
-              </td>
-              <td>
-                <input
-                  value={this.state.title}
-                  onChange={this.listenTitle}
-                />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                Author:
-              </td>
-              <td>
-                <input
-                  value={this.state.author}
-                  onChange={this.listenAuthor}
-                />
-              </td>
-            </tr>
-            <tr>
-              <td>
-                URL:
-              </td>
-              <td>
-                <input
-                  value={this.state.url}
-                  onChange={this.listenUrl}
-                />
-              </td>
-            </tr>
-          </tbody></table>
-          <div>
-            <button type="submit">Add blog</button>
-          </div>
-        </form>
-      </div>
+      <Form onSubmit={this.handleSubmit} className="login-form">
+        <FormItem>
+          {getFieldDecorator('title', {
+            rules: [{ required: true, message: 'Input missing!' }],
+          })(
+            <Input prefix={<Icon type="file" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Title" />
+          )}
+        </FormItem>
+        <FormItem>
+          {getFieldDecorator('author', {
+            rules: [{ required: true, message: 'Author missing!' }],
+          })(
+            <Input prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="Author" />
+          )}
+        </FormItem>
+        <FormItem>
+          {getFieldDecorator('url', {
+            rules: [{ required: true, message: 'URL missing!' }],
+          })(
+            <Input prefix={<Icon type="link" style={{ color: 'rgba(0,0,0,.25)' }} />} placeholder="URL" />
+          )}
+        </FormItem>
+        <FormItem>
+          <Button type="primary" htmlType="submit">
+            Create
+          </Button>
+        </FormItem>
+      </Form>
     )
   }
 }
 
+BasicAddBlogForm.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+  form: PropTypes.object.isRequired
+}
+
+const AddBlogForm = Form.create()(BasicAddBlogForm)
 export default AddBlogForm

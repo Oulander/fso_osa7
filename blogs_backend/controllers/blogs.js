@@ -47,8 +47,12 @@ blogsRouter.post('/', async (request, response) => {
     const saved = await blog.save()
     user.blogs = user.blogs.concat(saved._id)
     await user.save()
+    // console.log(blog.populate('user', { id: 1, username: 1, name: 1, }))
+    const populatedBlog = await Blog
+      .findById(saved._id)
+      .populate('user', { id: 1, username: 1, name: 1, })
 
-    response.status(201).json(Blog.format(saved))
+    response.status(201).json(Blog.format(populatedBlog))
   } catch(exception) {
     if (exception.name === 'JsonWebTokenError') {
       response.status(401).json({ error: exception.message })
@@ -84,7 +88,7 @@ blogsRouter.delete('/:id', async (request, response) => {
     const blog = await Blog.findById(request.params.id)
 
     if (user.id.toString() === blog.user.toString() || blog.user === null) {
-      await Blog.findByIdAndRemove(request.params.id)
+      await Blog.findByIdAndDelete(request.params.id)
     }
     else {
       response.status(401).json({ error: 'unauthorized user' })

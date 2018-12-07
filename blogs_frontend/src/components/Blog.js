@@ -1,11 +1,13 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Button, Collapse } from 'antd'
 
 export default class Blog extends React.Component {
   constructor(props){
     super(props)
     this.state = {
-      visible:false
+      visible:false,
+      likeDisabled: false
     }
   }
 
@@ -28,6 +30,7 @@ export default class Blog extends React.Component {
     event.preventDefault()
     event.stopPropagation()
     this.props.handleLike(this.props.blog)
+    this.setState({likeDisabled: true})
   }
 
   handleDeleteClick = (event) => {
@@ -40,28 +43,35 @@ export default class Blog extends React.Component {
 
   render() {
     const cssToShowExtraContent = { display: this.state.visible ? '' : 'none' }
-    const blogStyle = {
-      paddingTop: 10,
-      paddingLeft: 2,
-      border: 'solid',
-      borderWidth: 1,
-      marginBottom: 5
-    }
     const cssToShowDeleteButton = { display: this.props.showDeleteButton ? '' : 'none' }
 
     const userName = this.props.blog.user ? this.props.blog.user.name : 'unknown user'
 
     return (
-      <div className="blog" onClick={ this.toggleVisibility } style={blogStyle}>
+      <div className="blog" onClick={ this.toggleVisibility }>
         <div className="blogAlwaysShownContent">
-          {this.props.blog.title} {this.props.blog.author}
+          <strong>{`"${this.props.blog.title}"`}</strong> {`by ${this.props.blog.author}`}
         </div>
         <div className="blogToggledContent" style = {cssToShowExtraContent}>
+
           <div><a href={this.props.blog.url}>{this.props.blog.url}</a></div>
-          <div>{`${this.props.blog.likes} likes`}<button onClick={this.handleLikeClick}>like</button></div>
+
           <div>{`Added by ${userName}`}</div>
-          <div><button onClick={this.handleDeleteClick} style={cssToShowDeleteButton}>Delete blog</button></div>
+          <Button onClick={this.handleDeleteClick} style={cssToShowDeleteButton}>Delete blog</Button>
+
+          <div style = {{paddingTop: 10}}><Button onClick={this.handleLikeClick} disabled = {this.state.likeDisabled} icon="like">Like</Button><span style = {{marginLeft: 20}}><strong>{this.props.blog.likes}</strong> likes</span></div>
+
         </div>
       </div>
+      // <Collapse bordered={false}>
+      //   <Collapse.Panel header={`"${this.props.blog.title}" by ${this.props.blog.author}`}>
+      //     <div><a href={this.props.blog.url}>{this.props.blog.url}</a></div>
+      //
+      //     <div>{`Added by ${userName}`}</div>
+      //     <Button onClick={this.handleDeleteClick} style={cssToShowDeleteButton}>Delete blog</Button>
+      //
+      //     <div style = {{paddingTop: 10}}><Button onClick={this.handleLikeClick} disabled = {this.state.likeDisabled} icon="like">Like</Button><span style = {{marginLeft: 20}}><strong>{this.props.blog.likes}</strong> likes</span></div>
+      //   </Collapse.Panel>
+      // </Collapse>
     )}
 }

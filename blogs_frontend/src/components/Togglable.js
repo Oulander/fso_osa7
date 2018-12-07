@@ -1,5 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import { Button } from 'antd'
 
 export default class Togglable extends React.Component {
   constructor(props){
@@ -26,10 +27,10 @@ render() {
   return (
     <div className="togglableWrapper">
       <div style = {cssWhenContentHidden}>
-        <button onClick={ this.toggleVisibility }>{this.props.showButtonLabel}</button>
+        <Button onClick={ this.toggleVisibility }>{this.props.showButtonLabel}</Button>
       </div>
       <div style = {cssWhenContentShown} className="togglableContent">
-        <button onClick={ this.toggleVisibility }>{this.props.hideButtonLabel}</button>
+        <Button onClick={ this.toggleVisibility } style = {{marginBottom: 20}}>{this.props.hideButtonLabel}</Button>
         { this.props.children }
       </div>
     </div>
